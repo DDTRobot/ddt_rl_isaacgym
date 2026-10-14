@@ -1,0 +1,3 @@
+[submodule "ddt_ros2_control"]
+	path = ddt_ros2_control
+	url = https://github.com/DDTRobot/ddt_ros2_control.git
