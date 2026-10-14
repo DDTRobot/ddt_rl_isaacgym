@@ -1,10 +1,11 @@
 
 ### Installation ###
 1. Create a new python virtual env with python 3.6, 3.7 or 3.8 (3.8 recommended)
-2. Install pytorch 1.10 with cuda-11.3:
-    - `pip3 install torch==1.10.0+cu113 torchvision==0.11.1+cu113 torchaudio==0.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html`
+2. Install pytorch:
+    - For NVIDIA 30 series: `pip install torch==1.10.0+cu113 torchvision==0.11.1+cu113 torchaudio==0.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html`
+    - For NVIDIA 40 series: `pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117`
 3. Install Isaac Gym
-   - Download and install Isaac Gym Preview 3 (Preview 2 will not work!) from https://developer.nvidia.com/isaac-gym
+   - Download and install Isaac Gym Preview 4 (or Preview 3. Preview 2 will not work!) from https://developer.nvidia.com/isaac-gym
    - `cd isaacgym/python && pip install -e .`
    - Try running an example `cd examples && python 1080_balls_of_solitude.py`
    - For troubleshooting check docs `isaacgym/docs/index.html`)
@@ -24,10 +25,14 @@
     ├── scripts/
     └── utils/
     ```
-5. Fix URDF mesh paths (replaces `package://` URIs with absolute paths so Isaac Gym can locate the mesh files):
+5. Fix URDF mesh paths for Isaac Gym (replaces `package://` URIs with absolute paths so Isaac Gym can locate the mesh files):
     ```bash
     python scripts/fix_urdf_package_paths.py
     ```
+6. Install required dependencies for this repo
+	```bash
+	pip install -r requirements.txt
+	```
 
 ### CODE STRUCTURE ###
 1. Each environment is defined in an config file (`$ROBOT_$TERRAIN_config.py`) in `configs`, such as `d1_flat_config.py`. Task `d1_flat_config.py` as an example. The config file contains: 
@@ -37,10 +42,10 @@
     - `D1FlatCfgPPO` class: containing all the training parameters.
 2. Both env and config classes use inheritance.  
 3. Each non-zero reward scale specified in `cfg` will add a function with a corresponding name to the list of elements which will be summed to get the total reward.  
-4. Tasks must be registered using `task_registry.register(name, EnvClass, EnvConfig, TrainConfig)`. This is done in `$ROBOT/__init__.py`, but can also be done from outside of this repository.  
+4. Tasks must be registered using `task_registry.register(name, EnvClass, EnvConfig, TrainConfig)`. This is done in `$ROBOT/__init__.py`, but can also be done from outside of this repository. 
 
 ### Usage ###
-1. Train:  
+1. Train:
   ```python scripts/train.py --task=d1_flat```
     -  To run on CPU add following arguments: `--sim_device=cpu`, `--rl_device=cpu` (sim on CPU and rl on GPU is possible).
     -  To run headless (no rendering) add `--headless`.
